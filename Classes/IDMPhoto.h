@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "IDMPhotoProtocol.h"
-#import <AFNetworking/AFNetworking.h>
-
+#import <SDWebImageManager.h>
 // This class models a photo/image and it's caption
 // If you want to handle photos, caching, decompression
 // yourself then you can simply ensure your custom data model
