@@ -1217,9 +1217,21 @@ NSLocalizedStringFromTableInBundle((key), @"Localizable", [NSBundle bundleWithPa
 	}
 }
 
-- (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
-- (void)hideControls      { if(_autoHide) [self setControlsHidden:YES animated:YES permanent:NO]; }
-- (void)toggleControls    { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
+- (BOOL)areControlsHidden {
+    return (_toolbar.alpha == 0);
+}
+
+- (void)hideControls {
+    if(_autoHide)
+        [self setControlsHidden:YES animated:YES permanent:NO];
+}
+- (void)toggleControls {
+    if (self.disableVerticalSwipe && (!self.displayToolbar || !self.displayDoneButton)) {
+        [self doneButtonPressed:nil];
+    } else {
+        [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO];
+    }
+}
 
 
 #pragma mark - Properties
