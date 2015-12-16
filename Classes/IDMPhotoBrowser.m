@@ -501,6 +501,25 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 #pragma mark - Genaral
 
+- (void)dismissAnimated:(BOOL)animated {
+    if (!animated) {
+        _animationDuration = 0;
+    }
+    if (_forceHideStatusBar) {
+        forceStatusBarHiddenDismissAnimStart = YES;
+        [self setNeedsStatusBarAppearanceUpdate];
+    }
+    if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
+        IDMZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
+        [self performCloseAnimationWithScrollView:scrollView];
+    }
+    else {
+        _senderViewForAnimation.hidden = NO;
+        [self prepareForClosePhotoBrowser];
+        [self dismissPhotoBrowserAnimated:animated];
+    }
+}
+
 - (void)prepareForClosePhotoBrowser {
     // Gesture
     [_applicationWindow removeGestureRecognizer:_panGesture];
