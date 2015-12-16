@@ -80,6 +80,7 @@
 // Get IDMPhoto at index
 - (id<IDMPhoto>)photoAtIndex:(NSUInteger)index;
 
+typedef void (^DismissDoneBlock)();
 // Dismiss
-- (void)dismissAnimated:(BOOL)animated;
+- (void)dismissAnimated:(BOOL)animated complete:(DismissDoneBlock)block;
 @end

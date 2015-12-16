@@ -129,6 +129,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 // IDMPhotoBrowser
 @implementation IDMPhotoBrowser {
     BOOL forceStatusBarHiddenDismissAnimStart;
+    DismissDoneBlock dismissBlock;
 }
 
 // Properties
@@ -501,9 +502,10 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 #pragma mark - Genaral
 
-- (void)dismissAnimated:(BOOL)animated {
+- (void)dismissAnimated:(BOOL)animated complete:(DismissDoneBlock)block {
     if (!animated) {
         _animationDuration = 0;
+        dismissBlock = block;
     }
     if (_forceHideStatusBar) {
         forceStatusBarHiddenDismissAnimStart = YES;
@@ -544,6 +546,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 		{
 			_applicationTopViewController.modalPresentationStyle = _previousModalPresentationStyle;
 		}
+        if (dismissBlock) {
+            dismissBlock();
+        }
     }];
 }
 
