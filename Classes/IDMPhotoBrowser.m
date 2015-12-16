@@ -127,7 +127,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 @end
 
 // IDMPhotoBrowser
-@implementation IDMPhotoBrowser
+@implementation IDMPhotoBrowser {
+    BOOL forceStatusBarHiddenDismissAnimStart;
+}
 
 // Properties
 @synthesize displayDoneButton = _displayDoneButton, displayToolbar = _displayToolbar, displayActionButton = _displayActionButton, displayCounterLabel = _displayCounterLabel, useWhiteBackgroundColor = _useWhiteBackgroundColor, doneButtonImage = _doneButtonImage;
@@ -167,6 +169,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         _displayCounterLabel = NO;
         
         _forceHideStatusBar = NO;
+        forceStatusBarHiddenDismissAnimStart = NO;
         _usePopAnimation = NO;
 		_disableVerticalSwipe = NO;
 		
@@ -704,8 +707,12 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 }
 
 - (BOOL)prefersStatusBarHidden {
-    if(_forceHideStatusBar) {
-        return YES;
+    if (_forceHideStatusBar) {
+        if (forceStatusBarHiddenDismissAnimStart) {
+            return NO;
+        } else {
+            return YES;
+        }
     }
     
     if(_isdraggingPhoto) {
@@ -722,7 +729,11 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
-	return UIStatusBarAnimationFade;
+    if(_forceHideStatusBar) {
+        return UIStatusBarAnimationNone;
+    } else {
+        return UIStatusBarAnimationFade;
+    }
 }
 
 #pragma mark - Layout
@@ -1255,6 +1266,10 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 #pragma mark - Buttons
 
 - (void)doneButtonPressed:(id)sender {
+    if (_forceHideStatusBar) {
+        forceStatusBarHiddenDismissAnimStart = YES;
+        [self setNeedsStatusBarAppearanceUpdate];
+    }
     if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
         IDMZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
         [self performCloseAnimationWithScrollView:scrollView];
